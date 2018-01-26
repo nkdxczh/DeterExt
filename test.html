@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <script>
+var testfunc = function(arg0, arg1, ...args){
+  console.log(arg0);
+  console.log(arg1);
+  console.log(args);
+}
+
+var testfunc1 = function(){
+  console.log('fadsfad');
+}
+
+testfunc1.apply(this, []);
+//setTimeout(testfunc, 10, 1, 2, 3);
+//testfunc(1,2, 3,4);
+    </script>
+  </body>
+</html>

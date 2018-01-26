@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <script src="deterfox.js"></script>
+  </head>
+  <body>
+    <script>
+document.write(performance.now() + "<br>");
+for(i = 0; i < 1000; ++i);
+document.write(performance.now() + "<br>");
+
+document.write(performance.now() + "<br>");
+function cb(){
+  document.write(performance.now() + "<br>");
+}
+setTimeout(cb, 1000);
+
+count = 0;
+
+function tick(){
+  count += 1;
+  setTimeout(tick, 10);
+}
+
+tick();
+
+document.write(count + "<br>");
+function cb1(){
+
+  document.write("fadsfad" + count + "<br>");
+}
+setTimeout(cb1, 100);
+    </script>
+  </body>
+</html>
