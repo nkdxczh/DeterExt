@@ -1,8 +1,9 @@
 <html>
   <head>
-    <script src="deterfox.js"></script>
+    <script src="deterfox_begin.js"></script>
   </head>
   <body>
+    <script src="deterfox_body.js"></script>
     <script>
 document.write(performance.now() + "<br>");
 for(i = 0; i < 1000; ++i);
@@ -26,9 +27,10 @@ tick();
 document.write(count + "<br>");
 function cb1(){
 
-  document.write("fadsfad" + count + "<br>");
+  document.write("fadsfad  " + count + "<br>");
 }
-setTimeout(cb1, 100);
+setTimeout(cb1, 1000);
     </script>
   </body>
+    <script src="deterfox_end.js"></script>
 </html>
