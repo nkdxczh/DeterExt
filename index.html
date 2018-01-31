@@ -24,12 +24,37 @@ function tick(){
 
 tick();
 
-document.write(count + "<br>");
+var start = performance.now();
+document.write("start " + start + "<br>");
 function cb1(){
-
-  document.write("fadsfad  " + count + "<br>");
+  document.write("tick  " + count + "<br>");
+  duration = performance.now() - start;
+  document.write("time  " + duration + "<br>");
 }
 setTimeout(cb1, 1000);
+
+function doScriptParse(index)
+{	
+    console.log("call " + index);
+    var s = document.createElement('script');
+    console.log("fegawf "+s);
+    start = performance.now();
+    start_tick = count;
+    document.body.appendChild(s);
+    s.src = "file:///home/jason/project/deterfox/" + index + "e5.js";
+    window.onerror = function(){
+        end = performance.now();
+        end_tick = count;
+	duration = end - start;
+	duration_tick = end_tick - start_tick;
+	console.log(duration);
+	console.log(duration_tick);
+    };
+}
+
+console.log("set");
+doScriptParse(1);
+doScriptParse(9);
     </script>
   </body>
     <script src="deterfox_end.js"></script>

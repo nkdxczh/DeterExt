@@ -47,8 +47,8 @@ var __event_end__ = function(endTime, cb, params){
 
 var old_setTimeout = setTimeout;
 setTimeout = function(cb, delay, ...params){
-    __event_begin__(__counter__ + 100);
-    old_setTimeout(__event_end__, delay, __counter__ + 100, cb, params);
+    __event_begin__(__counter__ + delay);
+    old_setTimeout(__event_end__, delay, __counter__ + delay, cb, params);
 }
 
 //run event queue
@@ -68,3 +68,15 @@ var dispatch = function(){
 }
 
 dispatch();
+
+var ele_map = {};
+
+var old_appendChild = Element.prototype.appendChild;
+Element.prototype.appendChild = function(){
+	console.log("appendChild");
+	console.log(arguments[0]);
+	ele_map[arguments[0]] = __counter__;
+	old_appendChild.apply(this, arguments);
+}
+
+console.log("end start");
