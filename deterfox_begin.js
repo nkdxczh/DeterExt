@@ -3,7 +3,7 @@ var __counter__ = 0;
 
 var old_performance = performance.now;
 performance.now = function(){
-    __counter__ += 1;
+    //__counter__ += 1;
     return __counter__;
 }
 
@@ -51,6 +51,9 @@ setTimeout = function(cb, delay, ...params){
     old_setTimeout(__event_end__, delay, __counter__ + delay, cb, params);
 }
 
+var __deterfox_window_onerror__ = [];
+var old_windowonerror;
+
 //run event queue
 var dispatch = function(){
     if(__event_queue__.size() > 0 && __event_queue__.top()[3] == 0){
@@ -58,10 +61,19 @@ var dispatch = function(){
         __counter__ = e[0];
         cb = e[1];
         params = e[2];
-        cb.apply(params);
+        if(cb != null)cb.apply(this, params);
+    }
+    else if(__event_queue__.size() > 0 && __event_queue__.top()[3] == 1){
+	if(__counter__ + 1 <= __event_queue__.top()[0])__counter__ += 1;
     }
     else{
         __counter__ += 1;
+    }
+    
+    if(window.onerror + "" !== "function (){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}"){
+    	console.log("reset");
+	old_windowonerror = window.onerror;
+	window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
     }
 
     old_setTimeout(dispatch, 1);
@@ -69,14 +81,39 @@ var dispatch = function(){
 
 dispatch();
 
+var idx = 0
+var __deterfox_label__ = function(){
+	idx += 1;
+	return idx;
+}
+
 var ele_map = {};
 
 var old_appendChild = Element.prototype.appendChild;
 Element.prototype.appendChild = function(){
-	console.log("appendChild");
-	console.log(arguments[0]);
-	ele_map[arguments[0]] = __counter__;
+
+	arguments[0].endTime = __counter__ + 100;
+	__event_begin__(arguments[0].endTime);
+
+	var old_onload_handler = arguments[0].onload;
+	
+	arguments[0].onload = function(){
+		//console.log("all onload " + this.endTime);
+		if(__deterfox_window_onerror__.length > 0)window_onerror = __deterfox_window_onerror__.pop();
+		else window_onerror = [null, null];
+
+		old_onload_handler = null;
+		var cb = function(){
+			onerror_handler = arguments[0];
+			onerror_arguments = arguments[1];
+			onload_handler = arguments[2];
+			onload_arguments = arguments[3];
+			if(onerror_handler != null)onerror_handler.apply(onerror_arguments);
+			if(onload_handler != null)onload_handler.apply(onload_arguments);
+		}
+		var params = [window_onerror[0], window_onerror[1], old_onload_handler, arguments];
+		__event_end__(this.endTime, cb, params);
+	}
+
 	old_appendChild.apply(this, arguments);
 }
-
-console.log("end start");
