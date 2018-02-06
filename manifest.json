@@ -1,6 +1,6 @@
 { 
 "manifest_version": 2,
-"name": "Make Math.random always return 1"
+"name": "DeterBrowser"
 , "version": "0",
 "permissions": [
         "activeTab","webRequest","webRequestBlocking","downloads",

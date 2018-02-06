@@ -1,13 +1,11 @@
-//configurations for synchrounous defense
+
 var __counter__ = 0;
 
 var old_performance = performance.now;
 performance.now = function(){
-    //__counter__ += 1;
     return __counter__;
 }
 
-//priority queue declaration
 function PriorityQueue() {
     this.data = [];
 }
@@ -34,7 +32,7 @@ PriorityQueue.prototype.top = function() {
     return this.data[0];
 }
 
-//declaration for event queue
+
 var __event_queue__ = new PriorityQueue();
 
 var __event_begin__ = function(endTime){
@@ -46,7 +44,7 @@ var __event_end__ = function(endTime, cb, params){
 }
 
 var old_setTimeout = setTimeout;
-setTimeout = function(cb, delay, ...params){
+setTimeout = function(cb, delay, params){
     __event_begin__(__counter__ + delay);
     old_setTimeout(__event_end__, delay, __counter__ + delay, cb, params);
 }
@@ -54,8 +52,9 @@ setTimeout = function(cb, delay, ...params){
 var __deterfox_window_onerror__ = [];
 var old_windowonerror;
 
-//run event queue
+
 var dispatch = function(){
+
     if(__event_queue__.size() > 0 && __event_queue__.top()[3] == 0){
         var e = __event_queue__.pop();
         __counter__ = e[0];
@@ -70,8 +69,7 @@ var dispatch = function(){
         __counter__ += 1;
     }
     
-    if(window.onerror + "" !== "function (){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}"){
-    	console.log("reset");
+    if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}'){
 	old_windowonerror = window.onerror;
 	window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
     }
@@ -80,14 +78,6 @@ var dispatch = function(){
 }
 
 dispatch();
-
-var idx = 0
-var __deterfox_label__ = function(){
-	idx += 1;
-	return idx;
-}
-
-var ele_map = {};
 
 var old_appendChild = Element.prototype.appendChild;
 Element.prototype.appendChild = function(){
@@ -98,7 +88,6 @@ Element.prototype.appendChild = function(){
 	var old_onload_handler = arguments[0].onload;
 	
 	arguments[0].onload = function(){
-		//console.log("all onload " + this.endTime);
 		if(__deterfox_window_onerror__.length > 0)window_onerror = __deterfox_window_onerror__.pop();
 		else window_onerror = [null, null];
 
@@ -115,5 +104,21 @@ Element.prototype.appendChild = function(){
 		__event_end__(this.endTime, cb, params);
 	}
 
+	var old_onerror_handler = arguments[0].onerror;
+	
+	arguments[0].onerror = function(){
+		__event_end__(this.endTime, old_onerror_handler, arguments);
+	}
+
 	old_appendChild.apply(this, arguments);
+}
+
+var __deterfox_old_requestAnimationFrame__ = requestAnimationFrame;
+requestAnimationFrame = function(cb){
+	var time = 100;
+	__event_begin__(__counter__ + time);
+	var __deterfox_cb__ = function(){
+		__event_end__(__counter__ + time, cb);
+	}
+	__deterfox_old_requestAnimationFrame__(__deterfox_cb__);
 }

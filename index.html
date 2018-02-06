@@ -1,6 +1,6 @@
 <html>
   <head>
-    <script src="deterfox_begin.js"></script>
+    <script src="deterfox_inline.js"></script>
   </head>
   <body>
     
@@ -41,34 +41,78 @@ function doScriptParse(index)
     var s = document.createElement('script');
     start = performance.now();
     start_tick = count;
-    console.log("call " + index);
-    console.log(start);
-    console.log(start_tick);
-    s.src = index + "e5.js";
+    s.src = "./files/" + index + "e5.js";
     document.body.appendChild(s);
     window.onerror = function(){
         end = performance.now();
         end_tick = count;
 	duration = end - start;
 	duration_tick = end_tick - start_tick;
-	console.log("duration " + duration);
-	console.log("tick " + duration_tick);
+	console.log("script "+index+" duration " + duration);
+	console.log("script "+index+" tick " + duration_tick);
 	tmp += 1;
-	if(tmp < 5)doScriptParse(index);
+	//if(tmp < 5)doScriptParse(index);
     };
 }
 
+doScriptParse(1);
 doScriptParse(9);
-//doScriptParse(1);
+
+function doImageDecode(index)
+{	
+    s = document.createElement('img');
+    start = performance.now();
+    start_tick = count;
+    s.src = "./files/" + index + "e5.png";
+    s.onerror = function(){
+        end = performance.now();
+        end_tick = count;
+	duration = end - start;
+	duration_tick = end_tick - start_tick;
+	console.log("image "+index + " duration " + duration);
+	console.log("image "+index + " tick " + duration_tick);
+	tmp += 1;
+	//if(tmp < 5)doImageDecode(index);
+    };
+    document.body.appendChild(s);
+}
 
 tick();
 
-var src = document.getElementById("img");
-var img = document.createElement('img');
-img.src = "1.png";
-//img.onload = function(){console.log("image load");};
-src.appendChild(img);
+doImageDecode(1);
+doImageDecode(9);
     </script>
-    <script src="deterfox_end.js"></script>
+
+<img id="e">
+	<svg>
+            <!-- <filter id="threshold" color-interpolation-filters="sRGB">
+            <feColorMatrix type="matrix" 
+                           values="0.333 0.333 0.333 0 -.16
+                           0.333 0.333 0.333 0 -.16
+                           0.333 0.333 0.333 0 -.16
+                           0     0     0     0 1"
+                           />
+            <feComponentTransfer>
+            <feFuncR type="discrete" tableValues="1 0" />
+            <feFuncG type="discrete" tableValues="1 0" />
+            <feFuncB type="discrete" tableValues="1 0" />
+            </feCompnentTransfer>
+            </filter>-->
+
+            <filter id="morphology">
+                <feMorphology operator="erode" radius="3">
+                </filter>
+        </svg>
+
+<script>
+var element = document.getElementById('e');
+element.src = "./files/1.png";
+var lastTime = performance.now();
+function loop(t){
+	console.log(performance.now() - lastTime);
+}
+requestAnimationFrame(loop);
+        </script>
+
 
 </html>
