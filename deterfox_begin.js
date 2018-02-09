@@ -70,6 +70,7 @@ var dispatch = function(){
     }
     
     if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}'){
+	console.log(window.onerror);
 	old_windowonerror = window.onerror;
 	window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
     }
@@ -97,10 +98,14 @@ Element.prototype.appendChild = function(){
 			onerror_arguments = arguments[1];
 			onload_handler = arguments[2];
 			onload_arguments = arguments[3];
-			if(onerror_handler != null)onerror_handler.apply(onerror_arguments);
-			if(onload_handler != null)onload_handler.apply(onload_arguments);
+			window_ptr = arguments[4];
+			ele_ptr = arguments[5];
+			console.log(window_ptr);
+			console.log(ele_ptr);
+			if(onerror_handler != null)onerror_handler.apply(window_ptr, onerror_arguments);
+			if(onload_handler != null)onload_handler.apply(ele_ptr, onload_arguments);
 		}
-		var params = [window_onerror[0], window_onerror[1], old_onload_handler, arguments];
+		var params = [window_onerror[0], window_onerror[1], old_onload_handler, arguments, window, this];
 		__event_end__(this.endTime, cb, params);
 	}
 
@@ -110,7 +115,7 @@ Element.prototype.appendChild = function(){
 		__event_end__(this.endTime, old_onerror_handler, arguments);
 	}
 
-	old_appendChild.apply(this, arguments);
+	return old_appendChild.apply(this, arguments);
 }
 
 var __deterfox_old_requestAnimationFrame__ = requestAnimationFrame;
