@@ -12,7 +12,8 @@ function PriorityQueue() {
 
 PriorityQueue.prototype.push = function(endTime, cb, params, flag) {
     priority = +endTime;
-    for (var i = 0; i < this.data.length && this.data[i][0] < priority; i++);
+    var i = 0;
+    for (; i < this.data.length && this.data[i][0] < priority; i++);
     if(flag == 1)this.data.splice(i, 0, [priority, cb, params, flag]);
     else{
         for(; i < this.data.length && this.data[i][0] == priority && this.data[i][3] == 0; i++);
@@ -36,8 +37,8 @@ PriorityQueue.prototype.top = function() {
 
 var __event_queue__ = new PriorityQueue();
 
-var __event_begin__ = function(endTime){
-    __event_queue__.push(endTime, null, null, 1);
+var __event_begin__ = function(endTime, cb, params){
+    __event_queue__.push(endTime, cb, params, 1);
 }
 
 var __event_end__ = function(endTime, cb, params){
@@ -46,8 +47,13 @@ var __event_end__ = function(endTime, cb, params){
 
 var old_setTimeout = setTimeout;
 setTimeout = function(cb, delay, params){
-    __event_begin__(__counter__ + delay);
-    old_setTimeout(__event_end__, delay, __counter__ + delay, cb, params);
+    var endTime = __counter__ + delay;
+    __event_begin__(endTime, cb, params);
+    var setTimeoutcb = function(){
+        __event_end__(endTime, cb, params);
+    }
+    //old_setTimeout(__event_end__, delay, endTime, cb, params);
+    old_setTimeout(setTimeoutcb, delay);
 }
 
 var __deterfox_window_onerror__ = [];
@@ -70,7 +76,7 @@ var dispatch = function(){
         __counter__ += 1;
     }
 
-    if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}'){
+    if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror,arguments])}'){
         old_windowonerror = window.onerror;
         window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
     }
@@ -82,14 +88,18 @@ dispatch();
 
 var old_appendChild = Element.prototype.appendChild;
 Element.prototype.appendChild = function(){
+    if(arguments[0].tagName != "SCRIPT" && arguments[0].tagName != "IMG")return old_appendChild.apply(this, arguments);
+    duration = 10;
 
-    arguments[0].endTime = __counter__ + 100;
+    arguments[0].endTime = __counter__ + duration;
     __event_begin__(arguments[0].endTime);
 
     var old_onload_handler = arguments[0].onload;
 
     arguments[0].onload = function(){
-        if(__deterfox_window_onerror__.length > 0)window_onerror = __deterfox_window_onerror__.pop();
+        if(__deterfox_window_onerror__.length > 0){
+            window_onerror = __deterfox_window_onerror__.pop();
+        }
         else window_onerror = [null, null];
 
         //old_onload_handler = null;
