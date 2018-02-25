@@ -11,8 +11,8 @@ function PriorityQueue() {
 }
 
 PriorityQueue.prototype.push = function(endTime, cb, params, flag) {
-    priority = +endTime;
-    var i = 0;
+    let priority = +endTime;
+    let i = 0;
     for (; i < this.data.length && this.data[i][0] < priority; i++);
     if(flag == 1)this.data.splice(i, 0, [priority, cb, params, flag]);
     else{
@@ -38,53 +38,73 @@ PriorityQueue.prototype.top = function() {
 var __event_queue__ = new PriorityQueue();
 
 var __event_begin__ = function(endTime, cb, params){
+    if(endTime !== endTime)return;
+    //console.log("push",endTime, cb, params);
     __event_queue__.push(endTime, cb, params, 1);
 }
 
 var __event_end__ = function(endTime, cb, params){
-    __event_queue__.push(endTime, cb, params, 0);
+    __event_queue__.push(endTime, cb, params, 0); 
+    __deterfox_dispatch__(0);
 }
 
 var old_setTimeout = setTimeout;
 setTimeout = function(cb, delay, params){
-    var endTime = __counter__ + delay;
-    __event_begin__(endTime, cb, params);
-    var setTimeoutcb = function(){
+    if(delay === undefined || delay <= 0){
+        return old_setTimeout(cb, delay, params);
+    }
+    let endTime = __counter__ + delay;
+    if(typeof endTime != 'number'){
+        return old_setTimeout(cb, delay, params);
+    }
+    __event_begin__(endTime, cb, arguments );
+    //console.log("ST begin",endTime, this, cb, params);
+    let setTimeoutcb = function(){
+        //console.log("ST end", endTime, cb, params);
         __event_end__(endTime, cb, params);
     }
-    //old_setTimeout(__event_end__, delay, endTime, cb, params);
-    old_setTimeout(setTimeoutcb, delay);
+    return old_setTimeout(setTimeoutcb, delay);
 }
 
 var __deterfox_window_onerror__ = [];
 var old_windowonerror;
 
+var __deterfox_block__ = 0;
 
-var dispatch = function(){
-
-    if(__event_queue__.size() > 0 && __event_queue__.top()[3] == 0){
-        var e = __event_queue__.pop();
-        __counter__ = e[0];
-        cb = e[1];
-        params = e[2];
-        if(cb != null)cb.apply(this, params);
-    }
-    else if(__event_queue__.size() > 0 && __event_queue__.top()[3] == 1){
-        if(__counter__ + 1 <= __event_queue__.top()[0])__counter__ += 1;
-    }
-    else{
-        __counter__ += 1;
-    }
+var __deterfox_dispatch__ = function(flag){
+    /*if(flag == 1){
+        if(__event_queue__.size() == 0 || __event_queue__.top()[3] == 0)return;
+        else __event_queue__.pop();
+    }*/
 
     if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror,arguments])}'){
         old_windowonerror = window.onerror;
         window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
     }
 
-    old_setTimeout(dispatch, 1);
-}
+    while(__event_queue__.size() > 0){
 
-dispatch();
+        if(__event_queue__.top()[3] == 0){
+            let e = __event_queue__.pop();
+            __counter__ = e[0];
+            console.log("pop",__event_queue__.size(), e);
+            let cb = e[1];
+            let params = e[2];
+            //if(cb != null)cb.apply(this, params);
+            if(cb != null){
+                try{
+                    cb.apply(null, params);
+                }catch(err) {
+		    console.log(err);
+		}
+            }
+        }
+        else{
+            break;
+        }
+    }
+    //old_setTimeout(__deterfox_dispatch__,1000,1);
+}
 
 var old_appendChild = Element.prototype.appendChild;
 Element.prototype.appendChild = function(){
@@ -92,7 +112,8 @@ Element.prototype.appendChild = function(){
     duration = 10;
 
     arguments[0].endTime = __counter__ + duration;
-    __event_begin__(arguments[0].endTime);
+    let mya = arguments;
+    __event_begin__(arguments[0].endTime, "appendChild", mya);
 
     var old_onload_handler = arguments[0].onload;
 
@@ -130,9 +151,9 @@ var __deterfox_old_requestAnimationFrame__ = requestAnimationFrame;
 requestAnimationFrame = function(cb){
     var time = 100;
     var __deterfox_animation_time__ = __counter__ + time;
-    __event_begin__(__deterfox_animation_time__);
+    __event_begin__(__deterfox_animation_time__, "requestAnimationFrame", arguments);
     var __deterfox_cb__ = function(){
         __event_end__(__deterfox_animation_time__, cb, [__deterfox_animation_time__]);
     }
-    __deterfox_old_requestAnimationFrame__(__deterfox_cb__);
+    return __deterfox_old_requestAnimationFrame__(__deterfox_cb__);
 }
