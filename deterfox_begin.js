@@ -11,8 +11,8 @@ function PriorityQueue() {
 }
 
 PriorityQueue.prototype.push = function(endTime, cb, params, flag) {
-    let priority = +endTime;
-    let i = 0;
+    var priority = +endTime;
+    var i = 0;
     for (; i < this.data.length && this.data[i][0] < priority; i++);
     if(flag == 1)this.data.splice(i, 0, [priority, cb, params, flag]);
     else{
@@ -57,7 +57,7 @@ setTimeout = function(cb, delay, params){
     if(typeof endTime != 'number'){
         return old_setTimeout(cb, delay, params);
     }
-    __event_begin__(endTime, cb, arguments );
+    //__event_begin__(endTime, cb, arguments );
     //console.log("ST begin",endTime, this, cb, params);
     let setTimeoutcb = function(){
         //console.log("ST end", endTime, cb, params);
@@ -87,7 +87,7 @@ var __deterfox_dispatch__ = function(flag){
         if(__event_queue__.top()[3] == 0){
             let e = __event_queue__.pop();
             __counter__ = e[0];
-            console.log("pop",__event_queue__.size(), e);
+            //console.log("pop",__event_queue__.size(), e);
             let cb = e[1];
             let params = e[2];
             //if(cb != null)cb.apply(this, params);
