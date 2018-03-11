@@ -1,0 +1,7 @@
+1520634464210	geckodriver	INFO	Listening on 127.0.0.1:59215
+1520634465270	mozprofile::profile	INFO	Using profile path /tmp/rust_mozprofile.DGZyZk64dYZb
+1520634465270	geckodriver::marionette	INFO	Starting browser /usr/bin/firefox with args []
+1520634465272	geckodriver::marionette	INFO	Connecting to Marionette on localhost:34685
+1520634466190	Marionette	INFO	Enabled via --marionette
+1520634469052	Marionette	INFO	Listening on port 34685
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_modules_ping
