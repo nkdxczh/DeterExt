@@ -41,6 +41,7 @@ var __event_begin__ = function(endTime, cb, params){
     if(endTime !== endTime)return;
     //console.log("push",endTime, cb, params);
     __event_queue__.push(endTime, cb, params, 1);
+    __event_queue__.push(old_performance.call(performance), null, null, 2); 
 }
 
 var __event_end__ = function(endTime, cb, params){
@@ -77,12 +78,12 @@ var __deterfox_dispatch__ = function(flag){
         else __event_queue__.pop();
     }*/
 
-    if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror,arguments])}'){
-        old_windowonerror = window.onerror;
-        window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
-    }
-
     while(__event_queue__.size() > 0){
+
+        if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror,arguments])}'){
+            old_windowonerror = window.onerror;
+            window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
+        }
 
         if(__event_queue__.top()[3] == 0){
             let e = __event_queue__.pop();
@@ -98,6 +99,10 @@ var __deterfox_dispatch__ = function(flag){
 		    console.log(err);
 		}
             }
+        }
+        else if(__event_queue__.top()[3] == 2){
+            let e = __event_queue__.pop();
+            if(e[0] > __counter__)__counter__ = e[0];
         }
         else{
             break;
