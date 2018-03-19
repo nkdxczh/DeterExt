@@ -1,0 +1,5 @@
+plot "new_time" using ($1):(0.002) smooth cumulative, \
+> "old_time" using ($1):(0.002) smooth cumulative
+
+http://dromaeo.com/?id=271303
+http://dromaeo.com/?id=271317
