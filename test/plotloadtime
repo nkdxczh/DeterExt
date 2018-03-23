@@ -1,0 +1,5 @@
+
+set term postscript eps color blacktext "Helvetica" 24
+set output "./load.eps"
+plot "old_time" using ($1):(0.192) smooth cumulative ls 1 title "Chrome", "new_time" using ($1):(0.192) smooth cumulative ls 2 title "Chrome with Extension"
+plot "diff_oo" using ($1*100):(0.192) smooth cumulative ls 1 title "Chrome", "diff_on" using ($1*100):(0.192) smooth cumulative ls 2 title "Chrome with Extension"

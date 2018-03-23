@@ -1,0 +1,21 @@
+clear
+reset
+set xtics rotate by 45 right
+set style data histogram
+set style fill pattern border
+set datafile separator ","
+set style histogram clustered gap 1
+set boxwidth 1
+
+set ylabel "Speed (runs/s)"
+
+set key font ",15"
+set ylabel font ",15"
+set tics font ",10"
+
+#set term postscript eps size 1024,800
+#set output "dromaeo.eps"
+
+plot 'old_dromaeo' using 2:xticlabels(1) title "Chrome" lt -1, \
+ 'new_dromaeo' using 2:xticlabels(1) title "Chrome with Extension" lt -1
+

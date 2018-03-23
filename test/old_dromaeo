@@ -1,0 +1,56 @@
+Performance Test , 4735.38
+3D Mesh Transformation , 2126.20
+3D Raytrace , 2005.41
+AES Encryption/Decryption , 1683.12
+Arrays , 1110.72
+Base 64 Encoding and Decoding , 2360.31
+Bitwise And , 7694.00
+Code Evaluation , 1002.60
+Compute Bits in Byte , 35297.40
+Compute Bits in Byte (2) , 3701.60
+DNA Sequence Alignment , 3229.10
+DNA Sequence Counting , 526.40
+DOM Attributes , 3204.46
+DOM Attributes (Prototype) , 3676.52
+DOM Attributes (jQuery) , 2583.76
+DOM Events (Prototype) , 1903.50
+DOM Events (jQuery) , 89.78
+DOM Modification , 791.72
+DOM Modification (Prototype) , 561.28
+DOM Modification (jQuery) , 799.89
+DOM Query , 30721.04
+DOM Query (Dojo) , 8122.71
+DOM Query (ExtJS) , 12180.68
+DOM Query (Mootools) , 12693.04
+DOM Query (Prototype) , 9423.77
+DOM Query (Yahoo UI) , 13758.52
+DOM Query (jQuery) , 14381.89
+DOM Style (Prototype) , 999.16
+DOM Style (jQuery) , 1290.81
+DOM Traversal , 587.82
+DOM Traversal (Prototype) , 3104.17
+DOM Traversal (jQuery) , 169.63
+Date Formatting , 2099.00
+Date Formatting (2) , 2153.57
+DeltaBlue Constraint Solving , 7634.60
+Fannkuch , 3789.80
+MD5 Hashing , 11372.80
+N-Body Rotation and Gravity , 8706.80
+Partial Sum Calculation , 1646.27
+Prime Number Computation , 2096.40
+Prime Number Computation (2) , 2211.00
+RSA Encryption/Decryption , 1025.22
+RayTracer , 895.82
+Recursive Number Calculation , 2889.03
+Regular Expressions , 1067.27
+Richards Benchmarks , 8418.20
+Rotating 3D Cube , 3720.90
+SHA1 Hashing , 8981.00
+Script Unpacking , 274.07
+Spectral Norm of a Matrix , 8863.00
+String Parsing and Searching , 610.59
+Strings , 6817.03
+Tag Cloud Creation , 1401.17
+Traversing Binary Trees , 3685.80
+Trigonometric Calculation , 11083.40
+Validate User Input , 986.50

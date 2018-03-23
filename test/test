@@ -1,0 +1,12 @@
+set isosample 50
+set samples 1000
+splot ((sin (sqrt(x**2 + y**2))))/sqrt((x**2+y**2))
+set yrange [-20:20]
+set xrange [-20:20]
+replot
+set hidden3d
+replot
+set contour
+show view
+set view 65,30
+replot

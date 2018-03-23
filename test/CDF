@@ -1,0 +1,19 @@
+clear
+reset
+
+set ylabel "Percentage (%)"
+set xlabel "Percentage (%)"
+
+set yrange[0:100]
+set xrange[0:100]
+
+set key font ",15"
+set ylabel font ",15"
+set tics font ",15"
+
+#set term postscript eps size 1024,800
+#set output "dromaeo.eps"
+
+plot "diff_oo" using ($1*100):(0.19) smooth cumulative ls 1 title "Chrome",\
+ "diff_on" using ($1*100):(0.19) smooth cumulative ls 2 title "chrome with extension", \
+ "change" using ($1*100):(0.19) smooth cumulative ls 2 title "chrome with extension"
