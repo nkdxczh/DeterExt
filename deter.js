@@ -3,6 +3,7 @@ var __counter__ = 0;
 
 var old_performance = performance.now;
 performance.now = function(){
+    __counter__++;
     return __counter__;
 }
 
@@ -97,8 +98,12 @@ var __deter_dispatch__ = function(flag){
             if(e[0] > __counter__)__counter__ = e[0];
         }
         else{
-            __event_queue__.pop();
-            break;
+            if(flag == 2){
+                __event_queue__.pop();
+            }else{
+                //console.log('block ', __event_queue__.top()[0]);
+                break;
+            }
         }
     }
     if(flag != 1 && __event_queue__.size() == 0)__deter_last__();
@@ -148,6 +153,11 @@ Element.prototype.appendChild = function(){
 
 var __deter_requestAnimationFrame_func__;
 var __deter_windowonerror_func__;
+var __deter_postMessage_func__;
+var __deter_onmessage_func__;
+
+var __deter_onmessage_endTime__;
+
 var refresh = function(){
 
     if(__deter_requestAnimationFrame_func__ !== requestAnimationFrame.toString()){
@@ -165,10 +175,35 @@ var refresh = function(){
         __deter_requestAnimationFrame_func__ = requestAnimationFrame.toString();
     }
 
-    if(window.onerror === null || __deter_windowonerror_func__ !== window.onerror.toString()){
+    if(window.onerror !== null && __deter_windowonerror_func__ !== window.onerror.toString()){
         old_windowonerror = window.onerror;
         window.onerror = function(){__deter_window_onerror__.push([old_windowonerror, arguments]);}
         __deter_windowonerror_func__ = window.onerror.toString();
+    }
+
+    if(__deter_postMessage_func__ !== postMessage.toString()){
+
+        var __deter_old_postMessage__ = postMessage;
+        postMessage = function(){
+            if(arguments[0] != window && arguments[0] != 0)return __deter_old_postMessage__.apply(this,arguments);
+            var time = 100;
+            __deter_onmessage_endTime__ = __counter__ + time;
+            refresh();
+
+            //__event_end__(__counter__, __deter_old_postMessage__, arguments);
+            return __deter_old_postMessage__.apply(this,arguments);
+        }
+        __deter_postMessage_func__ = postMessage.toString();
+    }
+
+    if(window.onmessage == null || __deter_onmessage_func__ !== window.onmessage.toString()){
+
+        var __deter_old_onmessage__ = window.onmessage;
+        window.onmessage = function(){
+            //console.log('onmessage ', __deter_onmessage_endTime__ ,arguments, __deter_old_onmessage__);
+            __event_end__(__deter_onmessage_endTime__, __deter_old_onmessage__, arguments);
+        }
+        __deter_onmessage_func__ = onmessage.toString();
     }
 
 }
@@ -182,3 +217,5 @@ var __deter_last__ = function(){
         }
         __deter_dispatch__(1);
 }
+
+old_setTimeout(__deter_dispatch__, 30000, 2);
