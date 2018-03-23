@@ -39,14 +39,14 @@ var __event_queue__ = new PriorityQueue();
 
 var __event_begin__ = function(endTime, cb, params){
     if(endTime !== endTime)return;
-    //console.log("push",endTime, cb, params);
+    //console.log('push',endTime, cb, params);
     __event_queue__.push(endTime, cb, params, 1);
     __event_queue__.push(old_performance.call(performance), null, null, 2); 
 }
 
 var __event_end__ = function(endTime, cb, params){
     __event_queue__.push(endTime, cb, params, 0); 
-    __deterfox_dispatch__(0);
+    __deter_dispatch__(0);
 }
 
 var old_setTimeout = setTimeout;
@@ -59,36 +59,28 @@ setTimeout = function(cb, delay, params){
         return old_setTimeout(cb, delay, params);
     }
     //__event_begin__(endTime, cb, arguments );
-    //console.log("ST begin",endTime, this, cb, params);
+    //console.log('ST begin',endTime, this, cb, params);
     let setTimeoutcb = function(){
-        //console.log("ST end", endTime, cb, params);
+        //console.log('ST end', endTime, cb, params);
         __event_end__(endTime, cb, params);
     }
     return old_setTimeout(setTimeoutcb, delay);
 }
 
-var __deterfox_window_onerror__ = [];
+var __deter_window_onerror__ = [];
 var old_windowonerror;
 
-var __deterfox_block__ = 0;
+var __deter_block__ = 0;
 
-var __deterfox_dispatch__ = function(flag){
-    /*if(flag == 1){
-        if(__event_queue__.size() == 0 || __event_queue__.top()[3] == 0)return;
-        else __event_queue__.pop();
-    }*/
+var __deter_dispatch__ = function(flag){
 
     while(__event_queue__.size() > 0){
-
-        if(window.onerror + '' !== 'function (){__deterfox_window_onerror__.push([old_windowonerror,arguments])}'){
-            old_windowonerror = window.onerror;
-            window.onerror = function(){__deterfox_window_onerror__.push([old_windowonerror, arguments]);}
-        }
+        refresh();
 
         if(__event_queue__.top()[3] == 0){
             let e = __event_queue__.pop();
             __counter__ = e[0];
-            //console.log("pop",__event_queue__.size(), e);
+            //console.log('pop',__event_queue__.size(), e);
             let cb = e[1];
             let params = e[2];
             //if(cb != null)cb.apply(this, params);
@@ -96,8 +88,8 @@ var __deterfox_dispatch__ = function(flag){
                 try{
                     cb.apply(null, params);
                 }catch(err) {
-		    console.log(err);
-		}
+                    console.log(err);
+                }
             }
         }
         else if(__event_queue__.top()[3] == 2){
@@ -105,26 +97,28 @@ var __deterfox_dispatch__ = function(flag){
             if(e[0] > __counter__)__counter__ = e[0];
         }
         else{
+            __event_queue__.pop();
             break;
         }
     }
-    //old_setTimeout(__deterfox_dispatch__,1000,1);
+    if(flag != 1 && __event_queue__.size() == 0)__deter_last__();
+    //old_setTimeout(__deter_dispatch__,1000,1);
 }
 
 var old_appendChild = Element.prototype.appendChild;
 Element.prototype.appendChild = function(){
-    if(arguments[0].tagName != "SCRIPT" && arguments[0].tagName != "IMG")return old_appendChild.apply(this, arguments);
+    if(arguments[0].tagName != 'SCRIPT' && arguments[0].tagName != 'IMG')return old_appendChild.apply(this, arguments);
     duration = 10;
 
     arguments[0].endTime = __counter__ + duration;
     let mya = arguments;
-    __event_begin__(arguments[0].endTime, "appendChild", mya);
+    __event_begin__(arguments[0].endTime, 'appendChild', mya);
 
     var old_onload_handler = arguments[0].onload;
 
     arguments[0].onload = function(){
-        if(__deterfox_window_onerror__.length > 0){
-            window_onerror = __deterfox_window_onerror__.pop();
+        if(__deter_window_onerror__.length > 0){
+            window_onerror = __deter_window_onerror__.pop();
         }
         else window_onerror = [null, null];
 
@@ -152,13 +146,39 @@ Element.prototype.appendChild = function(){
     return old_appendChild.apply(this, arguments);
 }
 
-var __deterfox_old_requestAnimationFrame__ = requestAnimationFrame;
-requestAnimationFrame = function(cb){
-    var time = 100;
-    var __deterfox_animation_time__ = __counter__ + time;
-    __event_begin__(__deterfox_animation_time__, "requestAnimationFrame", arguments);
-    var __deterfox_cb__ = function(){
-        __event_end__(__deterfox_animation_time__, cb, [__deterfox_animation_time__]);
+var __deter_requestAnimationFrame_func__;
+var __deter_windowonerror_func__;
+var refresh = function(){
+
+    if(__deter_requestAnimationFrame_func__ !== requestAnimationFrame.toString()){
+
+        var __deter_old_requestAnimationFrame__ = requestAnimationFrame;
+        requestAnimationFrame = function(cb){
+            var time = 100;
+            let __deter_animation_time__ = __counter__ + time;
+            __event_begin__(__deter_animation_time__, 'requestAnimationFrame', null);
+            var __deter_cb__ = function(){
+                __event_end__(__deter_animation_time__, cb, [__counter__]);
+            }
+            return __deter_old_requestAnimationFrame__(__deter_cb__);
+        }
+        __deter_requestAnimationFrame_func__ = requestAnimationFrame.toString();
     }
-    return __deterfox_old_requestAnimationFrame__(__deterfox_cb__);
+
+    if(window.onerror === null || __deter_windowonerror_func__ !== window.onerror.toString()){
+        old_windowonerror = window.onerror;
+        window.onerror = function(){__deter_window_onerror__.push([old_windowonerror, arguments]);}
+        __deter_windowonerror_func__ = window.onerror.toString();
+    }
+
+}
+
+refresh();
+
+var __deter_last__ = function(){
+        while(__deter_window_onerror__.length > 0){
+            window_onerror = __deter_window_onerror__.pop();
+            __event_end__(9999999, window_onerror[0], window_onerror[1]);
+        }
+        __deter_dispatch__(1);
 }
