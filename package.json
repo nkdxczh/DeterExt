@@ -1,0 +1,16 @@
+{
+    "name": "deterfox_extension",
+    "version": "1.0.0",
+    "description": "Browser extension for preventing web timing attacks and making the browser deterministic",
+    "license": "UNLICENSED",
+    "repository": {
+        "url": "https://github.com/nkdxczh/deterfox_extension.git"
+    },
+    "scripts": {
+        "uglify": "node node_modules/uglify-js/bin/uglifyjs --compress --mangle --mangle-props --output tmp -- deter.js"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "uglify-js": "^3.3.18"
+    }
+}
