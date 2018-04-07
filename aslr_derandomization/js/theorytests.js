@@ -1,4 +1,4 @@
-// Calculate the average number of loops we can fit into the time between increments to performance.now's return
+/** Calculate the average number of loops we can fit into the time between increments to performance.now's return */
 function performanceNowIncrementTest() {
     avg = 0;
     numRuns = 100;
@@ -21,5 +21,3 @@ function outputToBody(outputString) {
   newElem.innerHTML = outputString;
   document.body.appendChild(newElem);
 }
-
-// FOR ANYTHING TO DO ON LOAD, PLACE IT IN THE WINDOW.ONLOAD FUNCTION IN ATTACK.JS

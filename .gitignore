@@ -4,3 +4,4 @@ deterfox2017.github.io
 test/data/
 node_modules
 .DS_Store
+*/**/asm_module.js

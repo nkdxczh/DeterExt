@@ -14,3 +14,6 @@ Now, instead of measuring how long memory references take using native Javascrip
 
 - **Shared Memory Counter**
 In this timer, we use a seperate core for counting. In a seperate thread, we have a counter incrementing. In the main thread, we grab the value of that counter (c1), perform the access, and then grab the counter again (c2). Slow memory accesses to main memory will have a larger c2-c1 than fast memory accesses.
+
+## ASM Javascript Module
+(Read the README.md file located in the "asm_module_creation/" directory)
