@@ -22,8 +22,4 @@ function outputToBody(outputString) {
   document.body.appendChild(newElem);
 }
 
-// Run when page finishes loading
-window.onload = function() {
-  let loopsBetweenTimerTicks = performanceNowIncrementTest();
-  outputToBody("We can loop " + loopsBetweenTimerTicks + " times before performance.now increments its return");
-}
+// FOR ANYTHING TO DO ON LOAD, PLACE IT IN THE WINDOW.ONLOAD FUNCTION IN ATTACK.JS

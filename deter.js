@@ -171,6 +171,8 @@ var old_windowonerror;
 
 // Override the Element.appendChild function to safely execute for typical targets of attacks:
 // appending images and script elements to a page
+// We immediately begin appending the element to the page, but push the user's callback to our
+// queue, where it will not be executed until our counter reaches the priority
 var old_appendChild = Element.prototype.appendChild;
 Element.prototype.appendChild = function(){
 
