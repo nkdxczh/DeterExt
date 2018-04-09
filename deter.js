@@ -1,3 +1,8 @@
+// Your code goes here
+
+
+var modified_APIs = (function(){
+
 // Our global counter variable
 var __counter__ = 0;
 
@@ -73,8 +78,8 @@ var __event_begin__ = function(endTime, cb, params){
         return;
     }
     //console.log('push',endTime, cb, params);
-    __event_queue__.push(endTime, cb, params, 1);
-    __event_queue__.push(old_performance.call(performance), null, null, 2); 
+    __event_queue__.push(endTime, null, null, 1);
+    __event_queue__.push(parseInt(old_performance.call(performance)), null, null, 2); 
 }
 
 /**
@@ -93,22 +98,22 @@ var old_setTimeout = setTimeout;
 setTimeout = function(cb, delay, params){
     if (delay === undefined || delay <= 0) {
         // Use the old settimeout handler for these special cases
-        return old_setTimeout(cb, delay, params);
+        //return old_setTimeout(cb, delay, params);
+	delay = 10;
     }
 
-    var endTime = __counter__ + delay;
-    if (typeof endTime != 'number') {
+    let inner_endTime = __counter__ + delay;
+    if (typeof inner_endTime != 'number') {
         // Use old settimeout handler for this special case
-        return old_setTimeout(cb, delay, params);
+        //return old_setTimeout(cb, delay, params);
+        inner_endTime = __counter__ + 10;
     }
 
     //__event_begin__(endTime, cb, arguments );
-    //console.log('ST begin',endTime, this, cb, params);
 
     // Push this function to our queue with flag 0 after the delay specified
     var setTimeoutcb = function(){
-        //console.log('ST end', endTime, cb, params);
-        __event_end__(endTime, cb, params);
+        __event_end__(inner_endTime, cb, params);
     }
     return old_setTimeout(setTimeoutcb, delay);
 }
@@ -129,7 +134,6 @@ var __deter_dispatch__ = function(flag) {
             var e = __event_queue__.pop();
             __counter__ = e[0];
 
-            //console.log('pop',__event_queue__.size(), e);
             if (e[1] != null) {
                 try {
                     e[1].apply(null, e[2]);
@@ -161,6 +165,10 @@ var __deter_dispatch__ = function(flag) {
     if (flag != 1 && __event_queue__.size() === 0) {
         __deter_last__();
     }
+    if (flag != 2 && __event_queue__.size() > 0){
+        // Kick off our dispatch method after 30 seconds
+        old_setTimeout(__deter_dispatch__, 30000, 2);
+    }
     //old_setTimeout(__deter_dispatch__,1000,1);
 }
 
@@ -180,7 +188,7 @@ Element.prototype.appendChild = function(){
     }
 
     // Average duration to append an element to the page we want to show every time
-    var avgDuration = 10;
+    let avgDuration = 1.132;
 
     // Append the blocking element with flag 1 to the queue
     arguments[0].endTime = __counter__ + avgDuration;
@@ -283,6 +291,7 @@ var refresh = function() {
         __deter_onmessage_func__ = onmessage.toString();
     }
 
+
 }
 
 // Perform all of our overrides
@@ -296,5 +305,12 @@ var __deter_last__ = function(){
         __deter_dispatch__(1);
 }
 
-// Kick off our dispatch method after 30 seconds
-old_setTimeout(__deter_dispatch__, 30000, 2);
+
+return [performance.now, setTimeout, requestAnimationFrame, Element.prototype.appendChild, __counter__];
+})();
+
+performance.now = modified_APIs[0];
+setTimeout = modified_APIs[1];
+requestAnimationFrame = modified_APIs[2];
+Element.prototype.appendChild = modified_APIs[3];
+__counter__ = modified_APIs[4];
